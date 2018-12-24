@@ -1,7 +1,7 @@
 from sys import maxsize
 
 
-class Group:
+class Project:
 
     def __init__(self, name=None, status=None, enabled=None, view_status=None, description=None, id=None):
         self.name = name

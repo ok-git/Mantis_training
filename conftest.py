@@ -1,11 +1,9 @@
 import pytest
 import json
-import jsonpickle
 import os.path
 import importlib
 from fixture.application import Application
-from fixture.db import DbFixture
-from fixture.orm import ORMFixture
+# from fixture.db import DbFixture
 
 
 fixture = None
@@ -25,34 +23,23 @@ def load_config(file):
 def app(request):
     global fixture
     browser = request.config.getoption("--browser")
-    web_config = load_config(request.config.getoption("--target"))['web']
+    server_config = load_config(request.config.getoption("--target"))['server']
     if fixture is None or not fixture.is_valid():
-        fixture = Application(browser=browser, base_url=web_config['baseUrl'])
-    fixture.session.ensure_login(username=web_config['username'], password=web_config['password'])
+        fixture = Application(browser=browser, base_url=server_config['baseUrl'])
+    # fixture.session.ensure_login(username=web_config['username'], password=web_config['password'])
     return fixture
 
 
-@pytest.fixture(scope="session")
-def db(request):
-    db_config = load_config(request.config.getoption("--target"))['db']
-    dbfixture = DbFixture(host=db_config['host'], name=db_config['name'],
-                          user=db_config['user'], password=db_config['password'])
-
-    def fin():
-        dbfixture.destroy()
-    request.addfinalizer(fin)
-    return dbfixture
-
-
-@pytest.fixture(scope="session")
-def ormdb(request):
-    db_config = load_config(request.config.getoption("--target"))['db']
-    ormdbfixture = ORMFixture(host=db_config['host'], name=db_config['name'],
-                              user=db_config['user'], password=db_config['password'])
-    #def fin():
-    #    ormdbfixture.destroy()
-    #request.addfinalizer(fin)
-    return ormdbfixture
+#@pytest.fixture(scope="session")
+#def db(request):
+#    db_config = load_config(request.config.getoption("--target"))['db']
+#    dbfixture = DbFixture(host=db_config['host'], name=db_config['name'],
+#                          user=db_config['user'], password=db_config['password'])
+#
+#    def fin():
+#        dbfixture.destroy()
+#    request.addfinalizer(fin)
+#    return dbfixture
 
 
 @pytest.fixture(scope="session", autouse=True)
