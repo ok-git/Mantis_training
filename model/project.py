@@ -12,10 +12,12 @@ class Project:
         self.id = id
 
     def __repr__(self):
-        return "%s:%s;%s;%s" % (self.id, self.name, self.status, self.enabled)
+        return "%s: %s; %s; %s; %s" % (self.id, self.name, self.status, self.inherit_global, self.view_status)
 
     def __eq__(self, other):
-        return (self.id is None or other.id is None or self.id == other.id) and self.name == other.name
+        return (self.id is None or other.id is None or self.id == other.id) and self.name == other.name \
+            and self.status == self.status and self.inherit_global == self.inherit_global \
+            and self.view_status == self.view_status
 
     def id_or_max(self):
         if self.id:

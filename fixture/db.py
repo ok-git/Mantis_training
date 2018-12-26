@@ -1,6 +1,5 @@
 import pymysql.cursors
-from model.group import Group
-from model.contact import Contact
+from model.project import Project
 
 
 class DbFixture:
@@ -12,41 +11,40 @@ class DbFixture:
         self.password = password
         self.connection = pymysql.connect(host=host, database=name, user=user, password=password, autocommit=True)
 
-    def get_group_list(self):
+    def get_project_list(self):
         list = []
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select group_id, group_name, group_header, group_footer from group_list")
+            cursor.execute("select id, name, status, view_state, description, inherit_global  from mantis_project_table")
             for row in cursor:
-                (id, name, header, footer) = row
-                list.append(Group(id=str(id), name=name, header=header, footer=footer))
+                (id, name, status, view_state, description, inherit_global) = row
+                list.append(Project(id=str(id),
+                                    name=name,
+                                    status=self.convert_status(status),
+                                    inherit_global=self.convert_inherit_global(inherit_global),
+                                    view_status=self.convert_view_state(view_state),
+                                    description=description))
         finally:
             cursor.close()
         return list
 
-    def get_contacts_list(self):
-        list = []
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute("select id, firstname, lastname, address, home, mobile, work, email, email2, email3, phone2\
-             from addressbook where deprecated='0000-00-00 00:00:00'")
-            for row in cursor:
-                (id, firstname, lastname, address, home, mobile, work, email, email2, email3, phone2) = row
-                list.append(Contact(id=str(id),
-                                    firstname=firstname,
-                                    lastname=lastname,
-                                    address=address,
-                                    home=home,
-                                    mobile=mobile,
-                                    work=work,
-                                    email=email,
-                                    email2=email2,
-                                    email3=email3,
-                                    phone2=phone2
-                                    ))
-        finally:
-            cursor.close()
-        return list
+    def convert_status(self, status):
+        status_dict = {10: "development",
+                       30: "release",
+                       50: "stable",
+                       70: "obsolete"}
+        return status_dict[status]
+
+    def convert_inherit_global(self, inherit_global):
+        if inherit_global == 1:
+            return True
+        else:
+            return False
+
+    def convert_view_state(self, view_state):
+        view_state_dict = {10: "public",
+                           50: "private"}
+        return view_state_dict[view_state]
 
     def destroy(self):
         self.connection.close()

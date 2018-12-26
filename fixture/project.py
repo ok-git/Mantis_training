@@ -39,7 +39,8 @@ class ProjectHelper:
 
     def change_inherit_global_value(self, inherit_global):
         wd = self.app.wd
-        if inherit_global:
+        # default value in the Web is True
+        if inherit_global is not True:
             wd.find_element_by_name("inherit_global").click()
 
     def open_project_create_page(self):
