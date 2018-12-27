@@ -6,8 +6,6 @@ class ProjectHelper:
     def __init__(self, app):
         self.app = app
 
-    project_cache = None
-
     def create(self, Project):
         wd = self.app.wd
         self.open_project_create_page()
@@ -15,7 +13,6 @@ class ProjectHelper:
         # submit project creation
         wd.find_element_by_css_selector("input[value='Add Project']").click()
         self.app.open_home_page()
-        self.project_cache = None
 
     def fill_project_form(self, Project):
         self.change_field_value("name", Project.name)
@@ -47,3 +44,24 @@ class ProjectHelper:
         wd = self.app.wd
         if not wd.current_url.endswith("/manage_proj_create_page.php"):
             wd.get("http://localhost/mantisbt-1.2.20/manage_proj_create_page.php")
+
+    def open_manage_project_page(self):
+        wd = self.app.wd
+        if not wd.current_url.endswith("/manage_proj_page.php"):
+            wd.get("http://localhost/mantisbt-1.2.20/manage_proj_page.php")
+
+    def select_project_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("[href^='manage_proj_edit_page.php?project_id=%s']" % id).click()
+
+    def delete_project_by_id(self, id):
+        wd = self.app.wd
+        self.open_manage_project_page()
+        self.select_project_by_id(id)
+        # first submit deletion
+        wd.find_element_by_name("delete").click()
+        # second submit deletion
+        wd.find_element_by_name("delete").click()
+        self.app.open_home_page()
+
+
