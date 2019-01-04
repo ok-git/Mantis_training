@@ -59,9 +59,9 @@ class ProjectHelper:
         self.open_manage_project_page()
         self.select_project_by_id(id)
         # first submit deletion
-        wd.find_element_by_name("delete").click()
+        wd.find_element_by_css_selector("input[value='Delete Project']").click()
         # second submit deletion
-        wd.find_element_by_name("delete").click()
+        wd.find_element_by_css_selector("input[value='Delete Project']").click()
         self.app.open_home_page()
 
 
