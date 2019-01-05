@@ -6,7 +6,9 @@ class JamesHelper:
         self.app = app
 
     def ensure_user_exists(self, username, password):
-        session = JamesHelper.Session("localhost", 4555, "root", "root")
+        james_config = self.app.config['james']
+        session = JamesHelper.Session(james_config['host'], james_config['port'],
+                                      james_config['username'], james_config['password'])
         if session.is_user_registered(username):
             session.reset_password(username, password)
         else:
@@ -31,7 +33,7 @@ class JamesHelper:
 
         def is_user_registered(self, username):
             self.write("verify %s\n" % username)
-            res = self.telent.expect([b"exist", b"does not exist"])
+            res = self.telent.expect([b"exists", b"does not exist"])
             return res[0] == 0
 
         def create_user(self, username, password):
