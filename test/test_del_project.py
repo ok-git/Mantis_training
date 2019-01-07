@@ -9,9 +9,9 @@ def test_delete_some_project(app, db):
                                    inherit_global=True,
                                    view_status="public",
                                    description="Description of the project"))
-    old_projects = db.get_project_list()
+    old_projects = app.soap.get_project_list()
     project = random.choice(old_projects)
     app.project.delete_project_by_id(project.id)
-    new_projects = db.get_project_list()
+    new_projects = app.soap.get_project_list()
     old_projects.remove(project)
     assert old_projects == new_projects

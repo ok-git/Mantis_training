@@ -1,25 +1,25 @@
-from model.project import Project
 from selenium.webdriver.support.ui import Select
+
 
 class ProjectHelper:
 
     def __init__(self, app):
         self.app = app
 
-    def create(self, Project):
+    def create(self, project):
         wd = self.app.wd
         self.open_project_create_page()
-        self.fill_project_form(Project)
+        self.fill_project_form(project)
         # submit project creation
         wd.find_element_by_css_selector("input[value='Add Project']").click()
         self.app.open_home_page()
 
-    def fill_project_form(self, Project):
-        self.change_field_value("name", Project.name)
-        self.change_dropdown_value("status", Project.status)
-        self.change_inherit_global_value(Project.inherit_global)
-        self.change_dropdown_value("view_state", Project.view_status)
-        self.change_field_value("description", Project.description)
+    def fill_project_form(self, project):
+        self.change_field_value("name", project.name)
+        self.change_dropdown_value("status", project.status)
+        self.change_inherit_global_value(project.inherit_global)
+        self.change_dropdown_value("view_state", project.view_status)
+        self.change_field_value("description", project.description)
 
     def change_field_value(self, field_name, text):
         wd = self.app.wd
@@ -43,12 +43,12 @@ class ProjectHelper:
     def open_project_create_page(self):
         wd = self.app.wd
         if not wd.current_url.endswith("/manage_proj_create_page.php"):
-            wd.get("http://localhost/mantisbt-1.2.20/manage_proj_create_page.php")
+            wd.get(self.app.base_url + "manage_proj_create_page.php")
 
     def open_manage_project_page(self):
         wd = self.app.wd
         if not wd.current_url.endswith("/manage_proj_page.php"):
-            wd.get("http://localhost/mantisbt-1.2.20/manage_proj_page.php")
+            wd.get(self.app.base_url + "manage_proj_page.php")
 
     def select_project_by_id(self, id):
         wd = self.app.wd
@@ -63,5 +63,3 @@ class ProjectHelper:
         # second submit deletion
         wd.find_element_by_css_selector("input[value='Delete Project']").click()
         self.app.open_home_page()
-
-
